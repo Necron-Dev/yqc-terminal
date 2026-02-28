@@ -1,25 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "odinaddon",
+  "id": "yqcterminal",
   "version": "${version}",
-  "name": "OdinAddon",
-  "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "BSD-3-Clause",
-  "icon": "assets/odinaddon/icon.png",
+  "name": "Yqloss Client Terminal",
+  "description": "qterm",
+  "authors": ["Yqloss"],
   "environment": "client",
   "entrypoints": {
     "client": [
       {
         "adapter": "kotlin",
-        "value": "com.odtheking.odinaddon.OdinAddon"
+        "value": "net.yqloss.yqcterminal.YqlossMainKt::init"
       }
     ]
   },
-  "mixins": [
-    "odinaddon.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric-api": ">=${fabric_api_version}",

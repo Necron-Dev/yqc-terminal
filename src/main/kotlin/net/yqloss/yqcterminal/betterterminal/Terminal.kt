@@ -88,18 +88,6 @@ inline fun Terminal.mapSlots(
         ?.map(function)
 }
 
-inline fun Terminal.mapSlotsWithSlotId(
-  items: List<ItemStack?>,
-  range: List<Int>,
-  function: (Pair<Int, ItemStack>) -> Int,
-): List<Int>? {
-  return range
-    .mapNotNull { if (it in items.indices) items[it] else null }
-    .mapIndexed { index, stack -> range[index] to stack }
-    .filter { it.second.item != Items.AIR }
-    .takeIf { it.size == range.size }
-    ?.map(function)
-}
 
 fun rectSlots(
     x1: Int,

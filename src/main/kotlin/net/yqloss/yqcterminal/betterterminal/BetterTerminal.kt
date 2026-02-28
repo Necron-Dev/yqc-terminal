@@ -2,7 +2,6 @@ package net.yqloss.yqcterminal.betterterminal
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.inventory.ContainerScreen
-import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.inventory.ChestMenu
 import net.minecraft.world.item.ItemStack
@@ -93,7 +92,7 @@ object BetterTerminal {
     if (this === other) return true
     if (this == null || other == null) return false
     if (this.size != other.size) return false
-    return this.withIndex().all { (index, value) -> value == other[index] }
+    return this.withIndex().all { (index, value) -> value == other[index] || value == 114514 || other[index] == 114514 }
   }
 
   infix fun List<Int>?.notEqualTo(other: List<Int>?): Boolean = !(this equalTo other)
@@ -178,8 +177,6 @@ object BetterTerminal {
 //            return if (until <= from) from.floorInt else Random.nextDouble(from, until).floorInt
         }
 
-  val clickedFuckingEnchantedShit = mutableListOf<Int>()
-  var shitToAdd: Int? = null
 
     fun onQueueClick(
       data: TerminalData,
@@ -310,33 +307,8 @@ object BetterTerminal {
                     val equalState = state equalTo data.actualState
 
                     when {
-                      data.terminal is TerminalStart -> {
-                        when {
-                          !equalID && !equalState -> {
-                            data.windowID = windowID
-                            data.pop()
-                            data.clickDelay = randomDelay
-                            shitToAdd?.let(clickedFuckingEnchantedShit::add)
-                            this@BetterTerminal.data = data
-                          }
-
-                          !equalID && equalState && shitToAdd != null -> {
-                            data.windowID = windowID
-                            data.pop()
-                            data.clickDelay = randomDelay
-                            shitToAdd?.let(clickedFuckingEnchantedShit::add)
-                            this@BetterTerminal.data = data
-                          }
-
-                          equalID && !equalState -> switchToNonQueue(terminal, state)
-
-                          // waiting for server to update the window
-                          else -> this@BetterTerminal.data = data
-                        }
-                      }
-
                       // next click
-                        !equalID && !equalState -> {
+                        !equalID -> {
                           data.windowID = windowID
                             data.pop()
                             data.clickDelay = randomDelay
@@ -370,14 +342,8 @@ object BetterTerminal {
 
         parsedState?.run {
             updateStoredData(data)
+          tickAndPerformQueuedClicks(this@BetterTerminal.data)
         }
-
-      parsedState?.run {
-        tickAndPerformQueuedClicks(this@BetterTerminal.data)
-      } ?: run {
-        shitToAdd = null
-        clickedFuckingEnchantedShit.clear()
-      }
     }
 
   fun update() {
@@ -391,16 +357,6 @@ object BetterTerminal {
         button: Int,
     ) {
         val chest = MC.screen as? ContainerScreen ?: return
-        if (data?.terminal is TerminalStart) {
-          chest.menu?.getSlot(slotID)?.item?.let { stack ->
-            if (stack.item?.components()?.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true) {
-              shitToAdd = slotID
-            } else {
-              shitToAdd = null
-            }
-          }
-
-        }
       if (TerminalSolver.debug) {
         MC.gui.chat.addMessage(Component.literal("Clicked ${chest.menu.containerId} slot $slotID with button $button"))
         Throwable("click").printStackTrace()

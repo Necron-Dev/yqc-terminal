@@ -1,6 +1,7 @@
 package net.yqloss.yqcterminal.betterterminal.terminal
 
 import com.odtheking.odin.utils.hasGlint
+import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
 import net.yqloss.yqcterminal.betterterminal.*
 
@@ -19,12 +20,13 @@ data class TerminalStart(
     override val title = "What starts with: '$letter'?"
 
     override fun parse(items: List<ItemStack?>): List<Int>? {
-        return mapSlotsWithSlotId(items, SLOTS) { (slotId, it) ->
+        return mapSlots(items, SLOTS, false) {
             if (it.hoverName?.string?.uppercase()?.startsWith(letter)==true) {
-              if (slotId in BetterTerminal.clickedFuckingEnchantedShit) {
-                println(it.toString())
+              when {
+                it.item?.components()?.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE) == true -> 114514
+                it.hasGlint() -> -1
+                else -> 1
               }
-              if (it.hasGlint() || slotId in BetterTerminal.clickedFuckingEnchantedShit) -1 else 1
             } else {
                 0
             }
@@ -33,7 +35,7 @@ data class TerminalStart(
 
     private fun getSlot(state: Int): SlotType {
         return when (state) {
-            1 -> SlotType.START_CORRECT
+            1, 114514 -> SlotType.START_CORRECT
             -1 -> SlotType.START_CLICKED
             else -> SlotType.START_WRONG
         }
@@ -67,7 +69,7 @@ data class TerminalStart(
         return Terminal.Prediction(
             result,
             when (result[pos]) {
-                1 -> {
+                1, 114514 -> {
                     result[pos] = -1
                     ClickType.CORRECT
                 }

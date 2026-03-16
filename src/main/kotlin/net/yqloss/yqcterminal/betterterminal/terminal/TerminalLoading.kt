@@ -22,4 +22,8 @@ data class TerminalLoading(
         slotID: Int,
         button: Int,
     ) = Terminal.Prediction(state, ClickType.NONE, button)
+
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return listOf()
+  }
 }

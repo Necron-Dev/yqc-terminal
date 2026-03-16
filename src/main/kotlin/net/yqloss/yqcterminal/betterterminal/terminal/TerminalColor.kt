@@ -81,6 +81,13 @@ data class TerminalColor(
         )
     }
 
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return getOrderedClicks(
+      draw(state),
+      lastClick
+    ) { it.type == SlotType.COLOR_CORRECT }
+  }
+
     companion object : TerminalFactory<TerminalColor> {
         override fun createIfMatch(title: String): TerminalColor? {
             val result = REGEX.matchEntire(title) ?: return null

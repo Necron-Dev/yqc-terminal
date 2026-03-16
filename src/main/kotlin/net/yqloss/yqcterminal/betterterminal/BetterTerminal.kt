@@ -182,11 +182,13 @@ object BetterTerminal {
       data: TerminalData,
       slotID: Int,
       result: Terminal.Prediction,
+      ignoreAuto: Boolean
     ) {
         val (click, noWindowIDUpdate) =
             when (result.clickType) {
                 ClickType.CORRECT ->
                     true.also {
+
                     } to false
 
                 ClickType.WRONG_WITH_WINDOW_ID_UPDATE ->
@@ -215,6 +217,11 @@ object BetterTerminal {
                 result.state,
                 QueueData(slotID, result.button, noWindowIDUpdate),
             )
+          if (TerminalSolver.autoTerminal && !ignoreAuto) {
+            for (i in data.terminal.auto(result.state, slotID)) {
+              onClick(i, 0, true)
+            }
+          }
         }
     }
 
@@ -238,13 +245,14 @@ object BetterTerminal {
     fun onClick(
         slotID: Int,
         button: Int,
+        ignoreAuto: Boolean = false
     ) {
         val data = data ?: return
         val button = if (data.terminal.enableRightClick) button else 0
         val result = data.terminal.predict(data.state, slotID, button)
         if (result.clickType === ClickType.NONE) return
         if (data.enableQueue) {
-            onQueueClick(data, slotID, result)
+            onQueueClick(data, slotID, result, ignoreAuto)
         } else {
             onNonQueueClick(slotID, result)
         }

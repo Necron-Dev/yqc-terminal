@@ -3,6 +3,7 @@ package net.yqloss.yqcterminal.betterterminal
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Blocks
+import kotlin.math.absoluteValue
 
 interface Terminal {
     val enableQueue: Boolean
@@ -27,6 +28,8 @@ interface Terminal {
         slotID: Int,
         button: Int,
     ): Prediction
+
+  fun auto(state: List<Int>, lastClick: Int): List<Int>
 
     data class SlotRenderInfo(
       val type: SlotType,
@@ -100,5 +103,28 @@ fun rectSlots(
             add(x + y * 9)
         }
     }
+}
+
+fun distance(i1: Int, i2: Int): Int {
+  val dx = (i1.mod(9) - i2.mod(9)).absoluteValue
+  val dy = (i1 / 9 - i2 / 9).absoluteValue
+  return dx * dx + dy * dy
+}
+
+fun getOrderedClicks(drawn: List<Terminal.SlotRenderInfo>, from: Int, toClick: (Terminal.SlotRenderInfo) -> Boolean): List<Int> {
+  val drawn = drawn.map { toClick(it) }.toMutableList()
+  var from = from
+  return buildList {
+    while (true) {
+      val (i, info, click) =  drawn
+        .mapIndexed { i, click -> Triple(i, click, distance(i, from)) }
+        .filter { (_, click, _) -> click }
+        .minByOrNull { (_, _, x) -> x } ?: return@buildList
+      from = i
+      add(i)
+      add(i)
+      drawn[i] = false
+    }
+  }
 }
 

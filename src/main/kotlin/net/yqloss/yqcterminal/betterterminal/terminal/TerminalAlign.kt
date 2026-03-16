@@ -68,6 +68,10 @@ data class TerminalAlign(
         button: Int,
     ) = Terminal.Prediction(state, ClickType.NORMAL, button)
 
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return listOf()
+  }
+
     companion object : TerminalFactory<TerminalAlign> {
         override fun createIfMatch(title: String): TerminalAlign? {
             title == "Click the button on time!" || return null

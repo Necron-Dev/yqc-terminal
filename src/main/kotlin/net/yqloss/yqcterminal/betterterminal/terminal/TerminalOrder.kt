@@ -68,6 +68,21 @@ data class TerminalOrder(
         return Terminal.Prediction(result, ClickType.CORRECT, button)
     }
 
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    val solution = solve(state)
+    return state
+      .mapIndexed { index, slot ->
+        when (index) {
+          in 0..6 -> index + 10
+          in 7..13 -> index + 12
+          else -> -1
+        } to slot
+      }
+      .filter { (_, slot) -> slot >= solution }
+      .sortedBy { (_, slot) -> slot }
+      .map { (index, _) -> index }
+  }
+
     companion object : TerminalFactory<TerminalOrder> {
         override fun createIfMatch(title: String): TerminalOrder? {
             title == "Click in order!" || return null

@@ -98,6 +98,13 @@ data class TerminalRubix(
         )
     }
 
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return getOrderedClicks(
+      draw(state),
+      lastClick
+    ) { it.type != SlotType.RUBIX_CORRECT }
+  }
+
     companion object : TerminalFactory<TerminalRubix> {
         override fun createIfMatch(title: String): TerminalRubix? {
             title == "Change all to same color!" || return null

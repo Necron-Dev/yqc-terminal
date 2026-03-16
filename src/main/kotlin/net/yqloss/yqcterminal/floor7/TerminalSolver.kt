@@ -37,6 +37,7 @@ object TerminalSolver : Module(
     private val cancelToolTip by BooleanSetting("Stop Tooltips", true, desc = "Stops rendering tooltips in terminals.").withDependency { renderType == 0 && solverSettings }
     private val cancelMelodySolver by BooleanSetting("Stop Melody Solver", false, desc = "Stops rendering the melody solver.").withDependency { solverSettings }
     val debug by BooleanSetting("Debug", false, desc = "Shows debug terminals.").withDependency { solverSettings }
+    val autoTerminal by BooleanSetting("Auto Terminal", false, desc = "Appends the solution to the queue after your first click.").withDependency { solverSettings }
 
     private val showColors by DropdownSetting("Color Settings")
     val backgroundColor by ColorSetting("Background", Colors.gray26, true, desc = "Background color of the terminal solver.").withDependency { showColors }

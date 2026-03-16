@@ -82,6 +82,14 @@ data class TerminalStart(
         )
     }
 
+
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return getOrderedClicks(
+      draw(state),
+      lastClick
+    ) { it.type == SlotType.START_CORRECT }
+  }
+
     companion object : TerminalFactory<TerminalStart> {
         override fun createIfMatch(title: String): TerminalStart? {
             return REGEX.matchEntire(title)?.let { result ->

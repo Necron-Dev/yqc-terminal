@@ -52,6 +52,13 @@ data class TerminalPanes(
         )
     }
 
+  override fun auto(state: List<Int>, lastClick: Int): List<Int> {
+    return getOrderedClicks(
+      draw(state),
+      lastClick
+    ) { it.type == SlotType.PANES_OFF }
+  }
+
     companion object : TerminalFactory<TerminalPanes> {
         override fun createIfMatch(title: String): TerminalPanes? {
             title == "Correct all the panes!" || return null
